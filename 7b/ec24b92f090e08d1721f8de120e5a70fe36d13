@@ -1,0 +1,38 @@
+static/index.html
+  s_9dccb9334b27d7::t_4ec4db3094e753 1507
+  s_9dccb9334b27d7::t_82d0dd87f3d340 1296-1302,1304,1309
+  s_9dccb9334b27d7::t_e8f4b8a4c932c3 1319,1323,1326-1327
+  s_9dccb9334b27d7::t_2dffe638256a79 330-337
+  s_9dccb9334b27d7::t_1a8cd8d4ec7d71 1334,1336-1341
+  s_9dccb9334b27d7::t_26382157fd4e11 424,431-434
+  s_9dccb9334b27d7::t_6a7e045616e605 253-256
+  s_9dccb9334b27d7::t_00db6779dcafef 1433-1440,1442
+  s_9dccb9334b27d7::t_c3aa3f82ce4e5e 984-1000
+internal/handlers/dashboard.go
+  s_9dccb9334b27d7::t_45e7b92e5e47a2 133-148
+internal/handlers/cobros.go
+  s_9dccb9334b27d7::t_b759e5a6a7fd88 73-79
+  s_9dccb9334b27d7::t_674461fbf744e4 31-36
+internal/handlers/caja.go
+  s_9dccb9334b27d7::t_fc52ef26404bd9 49-52,56
+internal/models/models.go
+  s_9dccb9334b27d7::t_02cbf6ff1b8614 126-129
+cmd/server/main.go
+  s_9dccb9334b27d7::t_951c7ceb9bf18c 65,71
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "7bec24b92f090e08d1721f8de120e5a70fe36d13",
+  "prompts": {},
+  "sessions": {
+    "s_9dccb9334b27d7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cc059469-8ec7-4349-967a-9f2072ce3643",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "evelayate_meli <edwin.velayate@mercadolibre.com.co>"
+    }
+  }
+}
