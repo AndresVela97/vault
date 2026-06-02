@@ -46,10 +46,14 @@ func ListarCaja(w http.ResponseWriter, r *http.Request) {
 	var saldo int64
 	db.Pool.QueryRow(context.Background(), `SELECT COALESCE(saldo,0) FROM caja ORDER BY id DESC LIMIT 1`).Scan(&saldo)
 
+	orden := "DESC"
+	if queryStr(r, "orden") == "asc" {
+		orden = "ASC"
+	}
 	rows, err := db.Pool.Query(context.Background(),
 		`SELECT id, fecha::text, tipo, descripcion, entrada, salida, saldo, cliente_id, prestamo_id
 		 FROM caja `+where+`
-		 ORDER BY fecha DESC, id DESC
+		 ORDER BY fecha `+orden+`, id `+orden+`
 		 LIMIT $`+strconv.Itoa(i)+` OFFSET $`+strconv.Itoa(i+1),
 		append(args, limit, offset)...,
 	)

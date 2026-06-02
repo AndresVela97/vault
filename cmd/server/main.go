@@ -62,13 +62,13 @@ func main() {
 			// Préstamos y clientes
 			r.Get("/prestamos", handlers.ListarPrestamos)
 			r.Get("/prestamos/{id}", handlers.ObtenerPrestamo)
-			r.With(middleware.SoloAdmin).Post("/prestamos", handlers.CrearPrestamo)
+			r.Post("/prestamos", handlers.CrearPrestamo)
 			r.With(middleware.SoloAdmin).Patch("/prestamos/{id}/datos", handlers.EditarPrestamo)
 			r.With(middleware.SoloAdmin).Patch("/prestamos/{id}/estado", handlers.CambiarEstado)
 			r.With(middleware.SoloAdmin).Patch("/prestamos/{id}/vencimiento", handlers.ProrrogarPrestamo)
 			r.With(middleware.SoloAdmin).Post("/prestamos/{id}/renovar", handlers.RenovarPrestamo)
 			r.Get("/clientes", handlers.ListarClientes)
-			r.With(middleware.SoloAdmin).Post("/clientes", handlers.CrearCliente)
+			r.Post("/clientes", handlers.CrearCliente)
 			r.With(middleware.SoloAdmin).Patch("/clientes/{id}", handlers.EditarCliente)
 
 			// Cobros

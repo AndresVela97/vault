@@ -28,11 +28,12 @@ func splitB() float64 { return 1 - splitA() }
 func RegistrarCobro(w http.ResponseWriter, r *http.Request) {
 	u := middleware.GetUser(r)
 	var body struct {
-		PrestamoID int64   `json:"prestamo_id"`
-		Monto      int64   `json:"monto"`
-		Concepto   string  `json:"concepto"`
-		Fecha      string  `json:"fecha"`
-		Notas      *string `json:"notas"`
+		PrestamoID   int64   `json:"prestamo_id"`
+		Monto        int64   `json:"monto"`
+		Concepto     string  `json:"concepto"`
+		Fecha        string  `json:"fecha"`
+		Notas        *string `json:"notas"`
+		InteresCobro *int64  `json:"interes_cobro"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		jsonError(w, "datos inválidos", http.StatusBadRequest)
@@ -69,9 +70,13 @@ func RegistrarCobro(w http.ResponseWriter, r *http.Request) {
 	if clienteTipo == "interes" && body.Concepto != "capital" {
 		base := body.Monto
 		if body.Concepto == "total" {
-			total := capital + interesMonto
-			if total > 0 {
-				base = int64(math.Round(float64(body.Monto) * float64(interesMonto) / float64(total)))
+			if body.InteresCobro != nil && *body.InteresCobro > 0 {
+				base = *body.InteresCobro
+			} else {
+				total := capital + interesMonto
+				if total > 0 {
+					base = int64(math.Round(float64(body.Monto) * float64(interesMonto) / float64(total)))
+				}
 			}
 		}
 		gananciaA = int64(math.Round(float64(base) * splitA()))

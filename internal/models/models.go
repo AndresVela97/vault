@@ -123,9 +123,10 @@ type Dashboard struct {
 	GananciasHistorial []GananciaMes `json:"ganancias_historial"`
 	Top3Deudores     []TopDeudor    `json:"top3_deudores"`
 	// Alertas
-	EnMora        []Prestamo `json:"en_mora"`
-	VencenEsta    []Prestamo `json:"vencen_esta_semana"`
-	UltimosCobros []Cobro    `json:"ultimos_cobros"`
+	EnMora         []Prestamo `json:"en_mora"`
+	VencidosUrgente []Prestamo `json:"vencidos_urgente"`
+	VencenEsta     []Prestamo `json:"vencen_esta_semana"`
+	UltimosCobros  []Cobro    `json:"ultimos_cobros"`
 }
 
 type Claims struct {

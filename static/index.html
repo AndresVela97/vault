@@ -250,6 +250,10 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
         <div id="grafica-labels" style="display:flex;justify-content:space-around;margin-top:6px"></div>
       </div>
 
+      <div class="sec" id="sec-vencidos" style="display:none">
+        <div class="sec-title" style="color:var(--red)">⚠ Préstamos vencidos</div>
+      </div>
+      <div class="list" id="vencidos-list"></div>
       <div class="sec"><div class="sec-title">Vencen esta semana</div></div>
       <div class="list" id="vencen-list"><div class="skel"></div></div>
     </div>
@@ -323,11 +327,14 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
         <button onclick="abrirModalRetiro()" style="background:var(--red-dim);border:1px solid var(--red);color:var(--red);border-radius:10px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">− Retiro</button>
       </div>
     </div>
-    <div class="tabs">
-      <button class="chip active" onclick="setCajaFiltro('',this)">Todo</button>
-      <button class="chip" onclick="setCajaFiltro('cobro',this)">Cobros</button>
-      <button class="chip" onclick="setCajaFiltro('aporte',this)">Aportes</button>
-      <button class="chip" onclick="setCajaFiltro('retiro',this)">Retiros</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <div class="tabs" style="flex:1;overflow-x:auto">
+        <button class="chip active" onclick="setCajaFiltro('',this)">Todo</button>
+        <button class="chip" onclick="setCajaFiltro('cobro',this)">Cobros</button>
+        <button class="chip" onclick="setCajaFiltro('aporte',this)">Aportes</button>
+        <button class="chip" onclick="setCajaFiltro('retiro',this)">Retiros</button>
+      </div>
+      <button id="caja-orden-btn" onclick="toggleCajaOrden()" style="flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:6px 12px;font-size:13px;color:var(--text);cursor:pointer;font-family:inherit;white-space:nowrap">↓ Reciente</button>
     </div>
     <div class="list" id="caja-list"><div class="skel"></div><div class="skel"></div></div>
   </div>
@@ -414,12 +421,17 @@ body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--t
       </div>
       <div class="form-group">
         <label class="form-label">Concepto</label>
-        <select class="form-input" id="cobro-concepto">
+        <select class="form-input" id="cobro-concepto" onchange="toggleInteresManual()">
           <option value="total">Total (capital + interés)</option>
           <option value="interes">Solo interés</option>
           <option value="capital">Solo capital</option>
           <option value="mora">Mora</option>
         </select>
+      </div>
+      <div class="form-group" id="grp-interes-manual" style="display:none">
+        <label class="form-label">Interés de este cobro (opcional)</label>
+        <input class="form-input" id="cobro-interes-manual" type="number" placeholder="80000">
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">Solo si el préstamo fue renovado. Si no lo completas se calcula automáticamente.</div>
       </div>
       <div class="form-group">
         <label class="form-label">Fecha</label>
@@ -969,6 +981,23 @@ async function cargarDashboard(){
       <div class="amount blue">+${fmt(c.monto)}</div>
     </div>`).join('')||'<div class="empty" style="padding:20px 0">Sin cobros</div>';
 
+  const vencidos=d.vencidos_urgente||[];
+  document.getElementById('sec-vencidos').style.display=vencidos.length?'':'none';
+  document.getElementById('vencidos-list').innerHTML=vencidos.map(p=>{
+    const diasVencido=Math.floor((new Date()-new Date(p.fecha_vencimiento))/(1000*60*60*24));
+    return `<div class="item" onclick="abrirPrestamo(${p.id})" style="cursor:pointer;border-left:3px solid var(--red)">
+      <div class="item-icon" style="background:var(--red-dim);color:var(--red)">!</div>
+      <div class="item-body">
+        <div class="item-name">${p.cliente_nombre}</div>
+        <div class="item-sub" style="color:var(--red)">${diasVencido} día${diasVencido!==1?'s':''} vencido · Saldo ${fmt(p.saldo)}</div>
+      </div>
+      <div class="item-right">
+        <div class="amount" style="color:var(--red)">${fmt(p.capital)}</div>
+        <div style="font-size:11px;color:var(--muted)">${p.fecha_vencimiento}</div>
+      </div>
+    </div>`;
+  }).join('');
+
   const vence=d.vencen_esta_semana||[];
   const venceNeg=vence.filter(p=>p.cliente_tipo!=='familiar');
   const venceFam=vence.filter(p=>p.cliente_tipo==='familiar');
@@ -1264,12 +1293,20 @@ async function abrirModalCobroDetalle(id,nombre){
   document.getElementById('modal-cobro').classList.add('open');
 }
 
+function toggleInteresManual(){
+  const concepto=document.getElementById('cobro-concepto').value;
+  const grp=document.getElementById('grp-interes-manual');
+  grp.style.display=concepto==='total'?'block':'none';
+  if(concepto!=='total') document.getElementById('cobro-interes-manual').value='';
+}
+
 function resetCobro(){
-  ['cobro-buscar','cobro-monto','cobro-notas'].forEach(id=>document.getElementById(id).value='');
+  ['cobro-buscar','cobro-monto','cobro-notas','cobro-interes-manual'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('cobro-err').textContent='';
   document.getElementById('cobro-confirm').style.display='none';
   document.getElementById('cobro-btn-c').style.display='inline-block';
   document.getElementById('cobro-btn-ok').style.display='none';
+  document.getElementById('grp-interes-manual').style.display='none';
   setDateVal('cobro-fecha',hoy());
   filtrarSelectCobro();
 }
@@ -1279,24 +1316,29 @@ function previsualizarCobro(){
   const monto=parseInt(document.getElementById('cobro-monto').value);
   const concepto=document.getElementById('cobro-concepto').value;
   const fecha=getDateVal('cobro-fecha');
+  const interesManual=parseInt(document.getElementById('cobro-interes-manual').value)||0;
   const err=document.getElementById('cobro-err');
   err.textContent='';
   if(!pid||!monto||!fecha){err.textContent='Completa todos los campos';return;}
+  if(concepto==='total'&&interesManual&&interesManual>=monto){err.textContent='El interés no puede ser mayor o igual al monto total';return;}
   const label=document.getElementById('cobro-prestamo').selectedOptions[0]?.text||'';
   const box=document.getElementById('cobro-confirm');
-  box.innerHTML=`<strong>Confirmar cobro</strong><br>Cliente: ${label}<br>Monto: <strong>${fmt(monto)}</strong> · Concepto: <strong>${concepto}</strong> · Fecha: ${fecha}`;
+  const interesInfo=concepto==='total'&&interesManual?` · Interés: <strong>${fmt(interesManual)}</strong>`:'';
+  box.innerHTML=`<strong>Confirmar cobro</strong><br>Cliente: ${label}<br>Monto: <strong>${fmt(monto)}</strong> · Concepto: <strong>${concepto}</strong>${interesInfo} · Fecha: ${fecha}`;
   box.style.display='block';
   document.getElementById('cobro-btn-c').style.display='none';
   document.getElementById('cobro-btn-ok').style.display='inline-block';
 }
 
 async function confirmarCobro(){
+  const interesManual=parseInt(document.getElementById('cobro-interes-manual').value)||null;
   const r=await api('/cobros',{method:'POST',body:{
-    prestamo_id: parseInt(document.getElementById('cobro-prestamo').value),
-    monto:       parseInt(document.getElementById('cobro-monto').value),
-    concepto:    document.getElementById('cobro-concepto').value,
-    fecha:       getDateVal('cobro-fecha'),
-    notas:       document.getElementById('cobro-notas').value||null,
+    prestamo_id:   parseInt(document.getElementById('cobro-prestamo').value),
+    monto:         parseInt(document.getElementById('cobro-monto').value),
+    concepto:      document.getElementById('cobro-concepto').value,
+    fecha:         getDateVal('cobro-fecha'),
+    notas:         document.getElementById('cobro-notas').value||null,
+    interes_cobro: interesManual,
   }},'cobro-btn-ok');
   if(!r) return;
   cerrarModal('modal-cobro');
@@ -1388,8 +1430,16 @@ async function crearPrestamo(){
 }
 
 // ── CAJA ──────────────────────────────────────────────────
+let cajaOrden='desc';
+
+function toggleCajaOrden(){
+  cajaOrden=cajaOrden==='desc'?'asc':'desc';
+  document.getElementById('caja-orden-btn').textContent=cajaOrden==='desc'?'↓ Reciente':'↑ Antiguo';
+  cargarCaja();
+}
+
 async function cargarCaja(tipo=cajaFiltroTipo){
-  const r=await api('/caja?limit=80'+(tipo?'&tipo='+tipo:''));
+  const r=await api('/caja?limit=80&orden='+cajaOrden+(tipo?'&tipo='+tipo:''));
   if(!r) return;
   document.getElementById('caja-saldo').textContent=fmt(r.saldo_actual||0);
   document.getElementById('caja-list').innerHTML=(r.data||[]).map(m=>{
@@ -1454,7 +1504,7 @@ function setCajaFiltro(tipo,btn){
   cajaFiltroTipo=tipo;
   document.querySelectorAll('#page-caja .chip').forEach(c=>c.classList.remove('active'));
   btn.classList.add('active');
-  cargarCaja(tipo);
+  cargarCaja();
 }
 
 // ── GANANCIAS ─────────────────────────────────────────────

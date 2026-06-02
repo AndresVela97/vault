@@ -130,7 +130,22 @@ func GetDashboard(w http.ResponseWriter, r *http.Request) {
 		ORDER BY p.fecha_vencimiento ASC LIMIT 10`)
 	d.EnMora = scanPrestamos(rows)
 
-	// ── Query 5: vencen esta semana + últimos cobros (un solo viaje) ────────
+	// ── Query 5a: vencidos urgentes (pendiente y ya pasaron la fecha) ───────
+	rows, _ = db.Pool.Query(ctx, `
+		SELECT p.id, p.cliente_id, c.nombre, c.tipo, c.telefono,
+		       p.capital, p.interes_pct, p.interes_monto, p.tipo_pago,
+		       p.fecha_inicio::text, p.fecha_vencimiento::text, p.estado,
+		       p.origen_capital, p.notas, COALESCE(cob.total_pagado,0)
+		FROM prestamos p JOIN clientes c ON c.id = p.cliente_id
+		LEFT JOIN (SELECT prestamo_id, SUM(monto) AS total_pagado FROM cobros GROUP BY prestamo_id) cob
+		       ON cob.prestamo_id = p.id
+		WHERE p.estado = 'pendiente'
+		  AND c.tipo = 'interes'
+		  AND p.fecha_vencimiento < $1::date
+		ORDER BY p.fecha_vencimiento ASC LIMIT 20`, hoy)
+	d.VencidosUrgente = scanPrestamos(rows)
+
+	// ── Query 5b: vencen esta semana (solo los que AÚN no vencieron) ────────
 	rows, _ = db.Pool.Query(ctx, `
 		SELECT p.id, p.cliente_id, c.nombre, c.tipo, c.telefono,
 		       p.capital, p.interes_pct, p.interes_monto, p.tipo_pago,
