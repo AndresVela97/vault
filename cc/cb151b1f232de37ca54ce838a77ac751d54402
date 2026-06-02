@@ -1,0 +1,19 @@
+Dockerfile
+  s_9dccb9334b27d7::t_a97495e15c86e0 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "cccb151b1f232de37ca54ce838a77ac751d54402",
+  "prompts": {},
+  "sessions": {
+    "s_9dccb9334b27d7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cc059469-8ec7-4349-967a-9f2072ce3643",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "AndresVela97 <edwinvela2009@hotmail.com>"
+    }
+  }
+}
