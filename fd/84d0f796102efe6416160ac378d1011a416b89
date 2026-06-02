@@ -1,0 +1,23 @@
+go.sum
+  ai_agent 2-3,18,23-24,33-34
+Dockerfile
+  s_9dccb9334b27d7::t_8f1347bd7afa48 1
+go.mod
+  s_9dccb9334b27d7::t_a72a57b03c94cb 3-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "fd84d0f796102efe6416160ac378d1011a416b89",
+  "prompts": {},
+  "sessions": {
+    "s_9dccb9334b27d7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cc059469-8ec7-4349-967a-9f2072ce3643",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "AndresVela97 <edwinvela2009@hotmail.com>"
+    }
+  }
+}
