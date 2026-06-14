@@ -70,7 +70,7 @@ func RegistrarPagoSocio(w http.ResponseWriter, r *http.Request) {
 	defer tx.Rollback(ctx)
 
 	var saldo int64
-	tx.QueryRow(ctx, `SELECT COALESCE(saldo,0) FROM caja ORDER BY id DESC LIMIT 1`).Scan(&saldo)
+	tx.QueryRow(ctx, `SELECT COALESCE(saldo,0) FROM caja ORDER BY fecha DESC, id DESC LIMIT 1`).Scan(&saldo)
 	if body.Monto > saldo {
 		jsonError(w, "saldo insuficiente en caja", http.StatusBadRequest)
 		return

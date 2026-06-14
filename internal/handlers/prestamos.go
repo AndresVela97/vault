@@ -235,14 +235,14 @@ func CrearPrestamo(w http.ResponseWriter, r *http.Request) {
 
 		if body.Fuente == "bolsillo" {
 			var saldo int64
-			tx.QueryRow(ctx, `SELECT COALESCE(saldo,0) FROM bolsillo ORDER BY id DESC LIMIT 1`).Scan(&saldo)
+			tx.QueryRow(ctx, `SELECT COALESCE(saldo,0) FROM bolsillo ORDER BY fecha DESC, id DESC LIMIT 1`).Scan(&saldo)
 			tx.Exec(ctx, `
 				INSERT INTO bolsillo (fecha, tipo, descripcion, entrada, salida, saldo, cliente_id, prestamo_id)
 				VALUES ($1,'prestamo',$2,0,$3,$4,$5,$6)`,
 				body.FechaInicio, clienteNombre, body.Capital, saldo-body.Capital, body.ClienteID, id)
 		} else {
 			var saldo int64
-			tx.QueryRow(ctx, `SELECT COALESCE(saldo,0) FROM caja ORDER BY id DESC LIMIT 1`).Scan(&saldo)
+			tx.QueryRow(ctx, `SELECT COALESCE(saldo,0) FROM caja ORDER BY fecha DESC, id DESC LIMIT 1`).Scan(&saldo)
 			tipoCaja := "prestamo"
 			if body.TipoPago == "libre" {
 				tipoCaja = "prestamo_familiar"

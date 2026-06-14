@@ -98,7 +98,7 @@ func RegistrarCobro(w http.ResponseWriter, r *http.Request) {
 	usaCaja := clienteTipo != "familiar" || origenCapital == "caja"
 	if usaCaja {
 		var saldo int64
-		tx.QueryRow(ctx, `SELECT COALESCE(saldo,0) FROM caja ORDER BY id DESC LIMIT 1`).Scan(&saldo)
+		tx.QueryRow(ctx, `SELECT COALESCE(saldo,0) FROM caja ORDER BY fecha DESC, id DESC LIMIT 1`).Scan(&saldo)
 		tipoCaja := map[string]string{
 			"capital": "cobro_capital", "mora": "cobro_mora",
 		}[body.Concepto]
@@ -112,7 +112,7 @@ func RegistrarCobro(w http.ResponseWriter, r *http.Request) {
 			body.Monto, saldo+body.Monto, clienteID, body.PrestamoID, cobroID)
 	} else {
 		var saldo int64
-		tx.QueryRow(ctx, `SELECT COALESCE(saldo,0) FROM bolsillo ORDER BY id DESC LIMIT 1`).Scan(&saldo)
+		tx.QueryRow(ctx, `SELECT COALESCE(saldo,0) FROM bolsillo ORDER BY fecha DESC, id DESC LIMIT 1`).Scan(&saldo)
 		_, err = tx.Exec(ctx, `
 			INSERT INTO bolsillo (fecha, tipo, descripcion, entrada, salida, saldo, cliente_id, prestamo_id, cobro_id)
 			VALUES ($1,'cobro',$2,$3,0,$4,$5,$6,$7)`,

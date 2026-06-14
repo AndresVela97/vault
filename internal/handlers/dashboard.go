@@ -39,8 +39,8 @@ func GetDashboard(w http.ResponseWriter, r *http.Request) {
 		),
 		saldos AS (
 			SELECT
-				(SELECT COALESCE(saldo,0) FROM caja    ORDER BY id DESC LIMIT 1) AS caja,
-				(SELECT COALESCE(saldo,0) FROM bolsillo ORDER BY id DESC LIMIT 1) AS bolsillo
+				(SELECT COALESCE(saldo,0) FROM caja    ORDER BY fecha DESC, id DESC LIMIT 1) AS caja,
+				(SELECT COALESCE(saldo,0) FROM bolsillo ORDER BY fecha DESC, id DESC LIMIT 1) AS bolsillo
 		),
 		ganancias AS (
 			SELECT COALESCE(SUM(ganancia_a),0) AS ga, COALESCE(SUM(ganancia_b),0) AS gb

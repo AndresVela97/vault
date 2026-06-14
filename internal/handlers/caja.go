@@ -44,7 +44,7 @@ func ListarCaja(w http.ResponseWriter, r *http.Request) {
 	db.Pool.QueryRow(context.Background(), `SELECT COUNT(*) FROM caja `+where, args...).Scan(&total)
 
 	var saldo int64
-	db.Pool.QueryRow(context.Background(), `SELECT COALESCE(saldo,0) FROM caja ORDER BY id DESC LIMIT 1`).Scan(&saldo)
+	db.Pool.QueryRow(context.Background(), `SELECT COALESCE(saldo,0) FROM caja ORDER BY fecha DESC, id DESC LIMIT 1`).Scan(&saldo)
 
 	orden := "DESC"
 	if queryStr(r, "orden") == "asc" {
@@ -96,7 +96,7 @@ func RegistrarAporte(w http.ResponseWriter, r *http.Request) {
 	defer tx.Rollback(ctx)
 
 	var saldo int64
-	tx.QueryRow(ctx, `SELECT COALESCE(saldo,0) FROM caja ORDER BY id DESC LIMIT 1`).Scan(&saldo)
+	tx.QueryRow(ctx, `SELECT COALESCE(saldo,0) FROM caja ORDER BY fecha DESC, id DESC LIMIT 1`).Scan(&saldo)
 
 	tx.Exec(ctx, `INSERT INTO aportes (fecha, monto, socio, descripcion) VALUES ($1,$2,$3,$4)`,
 		body.Fecha, body.Monto, body.Socio, body.Descripcion)
@@ -135,7 +135,7 @@ func RegistrarRetiro(w http.ResponseWriter, r *http.Request) {
 	defer tx.Rollback(ctx)
 
 	var saldo int64
-	tx.QueryRow(ctx, `SELECT COALESCE(saldo,0) FROM caja ORDER BY id DESC LIMIT 1`).Scan(&saldo)
+	tx.QueryRow(ctx, `SELECT COALESCE(saldo,0) FROM caja ORDER BY fecha DESC, id DESC LIMIT 1`).Scan(&saldo)
 	if body.Monto > saldo {
 		jsonError(w, "saldo insuficiente en caja", http.StatusBadRequest)
 		return
