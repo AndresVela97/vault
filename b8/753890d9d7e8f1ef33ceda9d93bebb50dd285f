@@ -1,0 +1,30 @@
+internal/handlers/pagos_socios.go
+  s_0efb6ed253a24c::t_341297437a89a7 73
+internal/handlers/dashboard.go
+  s_0efb6ed253a24c::t_6f85a8785249b2 42-43
+internal/handlers/cobros.go
+  s_0efb6ed253a24c::t_3c13e39dc0fa6c 115
+  s_0efb6ed253a24c::t_c7c81f9202dfbb 101
+internal/handlers/caja.go
+  s_0efb6ed253a24c::t_5323dbcf1f730c 99,138
+  s_0efb6ed253a24c::t_dfe7c53b206fcb 47
+internal/handlers/prestamos.go
+  s_0efb6ed253a24c::t_213da123105e6c 238
+  s_0efb6ed253a24c::t_efa89fe1c455ab 245
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "b8753890d9d7e8f1ef33ceda9d93bebb50dd285f",
+  "prompts": {},
+  "sessions": {
+    "s_0efb6ed253a24c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ebcb4e68-a4c0-41d2-bc92-34835d766939",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "AndresVela97 <edwinvela2009@hotmail.com>"
+    }
+  }
+}
