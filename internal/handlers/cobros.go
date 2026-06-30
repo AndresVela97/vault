@@ -73,10 +73,13 @@ func RegistrarCobro(w http.ResponseWriter, r *http.Request) {
 			if body.InteresCobro != nil && *body.InteresCobro > 0 {
 				base = *body.InteresCobro
 			} else {
-				total := capital + interesMonto
-				if total > 0 {
-					base = int64(math.Round(float64(body.Monto) * float64(interesMonto) / float64(total)))
+				var interesYaPagado int64
+				tx.QueryRow(ctx, `SELECT COALESCE(SUM(monto),0) FROM cobros WHERE prestamo_id=$1 AND concepto='interes'`, body.PrestamoID).Scan(&interesYaPagado)
+				interesRestante := interesMonto - interesYaPagado
+				if interesRestante < 0 {
+					interesRestante = 0
 				}
+				base = interesRestante
 			}
 		}
 		gananciaA = int64(math.Round(float64(base) * splitA()))
