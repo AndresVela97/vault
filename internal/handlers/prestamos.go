@@ -14,23 +14,27 @@ import (
 )
 
 func calcularMora(fechaVenc string, pagado, totalEsperado int64) int64 {
-	if pagado >= totalEsperado {
-		return 0
-	}
-	venc, err := time.Parse("2006-01-02", fechaVenc)
-	if err != nil {
-		return 0
-	}
-	hoy := time.Now().Truncate(24 * time.Hour)
-	if !hoy.After(venc) {
-		return 0
-	}
-	dias := int(hoy.Sub(venc).Hours() / 24)
-	if dias <= 0 {
-		return 0
-	}
-	semanas := int64((dias-1)/7) + 1
-	return semanas * 5000
+	// PAUSADO: cálculo de $5.000/semana temporalmente desactivado
+	return 0
+	/*
+		if pagado >= totalEsperado {
+			return 0
+		}
+		venc, err := time.Parse("2006-01-02", fechaVenc)
+		if err != nil {
+			return 0
+		}
+		hoy := time.Now().Truncate(24 * time.Hour)
+		if !hoy.After(venc) {
+			return 0
+		}
+		dias := int(hoy.Sub(venc).Hours() / 24)
+		if dias <= 0 {
+			return 0
+		}
+		semanas := int64((dias-1)/7) + 1
+		return semanas * 5000
+	*/
 }
 
 func ListarPrestamos(w http.ResponseWriter, r *http.Request) {
