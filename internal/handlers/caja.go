@@ -105,9 +105,12 @@ func RegistrarAporte(w http.ResponseWriter, r *http.Request) {
 	if body.Descripcion != nil {
 		desc = *body.Descripcion
 	}
-	tx.Exec(ctx, `INSERT INTO caja (fecha, tipo, descripcion, entrada, salida, saldo) VALUES ($1,'aporte',$2,$3,0,$4)`,
-		body.Fecha, desc, body.Monto, saldo+body.Monto)
-
+	tx.Exec(ctx, `INSERT INTO caja (fecha, tipo, descripcion, entrada, salida, saldo) VALUES ($1,'aporte',$2,$3,0,0)`,
+		body.Fecha, desc, body.Monto)
+	if err := db.RecalcularSaldos(ctx, tx, "caja", body.Fecha); err != nil {
+		jsonError(w, "error recalculando saldo", http.StatusInternalServerError)
+		return
+	}
 	if err := tx.Commit(ctx); err != nil {
 		jsonError(w, "error guardando aporte", http.StatusInternalServerError)
 		return
@@ -144,10 +147,14 @@ func RegistrarRetiro(w http.ResponseWriter, r *http.Request) {
 	if body.Descripcion != nil {
 		desc = *body.Descripcion
 	}
-	_, err = tx.Exec(ctx, `INSERT INTO caja (fecha, tipo, descripcion, entrada, salida, saldo) VALUES ($1,'retiro',$2,0,$3,$4)`,
-		body.Fecha, desc, body.Monto, saldo-body.Monto)
+	_, err = tx.Exec(ctx, `INSERT INTO caja (fecha, tipo, descripcion, entrada, salida, saldo) VALUES ($1,'retiro',$2,0,$3,0)`,
+		body.Fecha, desc, body.Monto)
 	if err != nil {
 		jsonError(w, "error registrando retiro", http.StatusInternalServerError)
+		return
+	}
+	if err := db.RecalcularSaldos(ctx, tx, "caja", body.Fecha); err != nil {
+		jsonError(w, "error recalculando saldo", http.StatusInternalServerError)
 		return
 	}
 	if err := tx.Commit(ctx); err != nil {

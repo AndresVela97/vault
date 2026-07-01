@@ -85,9 +85,10 @@ func RegistrarPagoSocio(w http.ResponseWriter, r *http.Request) {
 	var cajaID int
 	tx.QueryRow(ctx, `
 		INSERT INTO caja (fecha, tipo, descripcion, entrada, salida, saldo)
-		VALUES ($1,'retiro',$2,0,$3,$4) RETURNING id`,
-		body.Fecha, desc, body.Monto, saldo-body.Monto,
+		VALUES ($1,'retiro',$2,0,$3,0) RETURNING id`,
+		body.Fecha, desc, body.Monto,
 	).Scan(&cajaID)
+	db.RecalcularSaldos(ctx, tx, "caja", body.Fecha)
 
 	var id int
 	tx.QueryRow(ctx, `
@@ -116,12 +117,11 @@ func EliminarPagoSocio(w http.ResponseWriter, r *http.Request) {
 		jsonError(w, "pago no encontrado", http.StatusNotFound)
 		return
 	}
+	var fechaCaja string
 	if cajaID != nil {
-		var entrada, salida int64
-		tx.QueryRow(ctx, `SELECT entrada, salida FROM caja WHERE id=$1`, *cajaID).Scan(&entrada, &salida)
+		tx.QueryRow(ctx, `SELECT fecha::text FROM caja WHERE id=$1`, *cajaID).Scan(&fechaCaja)
 		tx.Exec(ctx, `DELETE FROM caja WHERE id=$1`, *cajaID)
-		delta := salida - entrada
-		tx.Exec(ctx, `UPDATE caja SET saldo = saldo + $1 WHERE id > $2`, delta, *cajaID)
+		db.RecalcularSaldos(ctx, tx, "caja", fechaCaja)
 	}
 	tx.Exec(ctx, `DELETE FROM pagos_socios WHERE id=$1`, id)
 	if err := tx.Commit(ctx); err != nil {
