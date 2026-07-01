@@ -1,0 +1,19 @@
+internal/handlers/prestamos.go
+  s_0efb6ed253a24c::t_7f6b38dcba1090 17-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "6866c12ecc873727c6897cf1b5671800fc95a181",
+  "prompts": {},
+  "sessions": {
+    "s_0efb6ed253a24c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ebcb4e68-a4c0-41d2-bc92-34835d766939",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "AndresVela97 <edwinvela2009@hotmail.com>"
+    }
+  }
+}
