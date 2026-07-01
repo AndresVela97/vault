@@ -1,0 +1,31 @@
+internal/handlers/prestamos.go
+  s_0efb6ed253a24c::t_c4177d15290bf8 239-241,249-251
+internal/handlers/pagos_socios.go
+  s_0efb6ed253a24c::t_44f0086c955006 120,122,124
+  s_0efb6ed253a24c::t_b9fe80a620383c 88-89,91
+internal/handlers/cobros.go
+  s_0efb6ed253a24c::t_5b1c208ca1ec7e 111,113-116,120,122-125
+internal/db/db.go
+  s_0efb6ed253a24c::t_d769d027050df9 8,30-51
+  s_0efb6ed253a24c::t_125ac2c8816b85 12
+  s_0efb6ed253a24c::t_f07a8949d02299 52
+internal/handlers/caja.go
+  s_0efb6ed253a24c::t_b63c649381371a 108-113,158-159
+  s_0efb6ed253a24c::t_00b29b3d27e83b 150-151,156-157
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.6",
+  "base_commit_sha": "b6784f53401c786b0bec40fe06651c0814cd6713",
+  "prompts": {},
+  "sessions": {
+    "s_0efb6ed253a24c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ebcb4e68-a4c0-41d2-bc92-34835d766939",
+        "model": "claude-sonnet-4-6"
+      },
+      "human_author": "AndresVela97 <edwinvela2009@hotmail.com>"
+    }
+  }
+}
