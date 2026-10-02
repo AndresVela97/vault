@@ -32,10 +32,9 @@ ADMIN_EMAIL=admin@tudominio.com
 ADMIN_PASSWORD=tu-password-seguro
 SOCIO_EMAIL=socio@tudominio.com
 SOCIO_PASSWORD=su-password-seguro
-
-# Porcentaje de ganancia para el socio A (por defecto 60%)
-SPLIT_A=60
 ```
+
+Las ganancias de los cobros se reparten en partes iguales entre los dos socios (50/50).
 
 ## Correr localmente
 

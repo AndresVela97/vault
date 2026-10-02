@@ -3,10 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
-	"math"
 	"net/http"
-	"os"
-	"strconv"
 
 	"github.com/go-chi/chi/v5"
 
@@ -14,16 +11,6 @@ import (
 	"vault/internal/middleware"
 	"vault/internal/models"
 )
-
-func splitA() float64 {
-	v, _ := strconv.ParseFloat(os.Getenv("SPLIT_A"), 64)
-	if v == 0 {
-		v = 60
-	}
-	return v / 100
-}
-
-func splitB() float64 { return 1 - splitA() }
 
 func RegistrarCobro(w http.ResponseWriter, r *http.Request) {
 	u := middleware.GetUser(r)
@@ -82,8 +69,10 @@ func RegistrarCobro(w http.ResponseWriter, r *http.Request) {
 				base = interesRestante
 			}
 		}
-		gananciaA = int64(math.Round(float64(base) * splitA()))
-		gananciaB = int64(math.Round(float64(base) * splitB()))
+		// Divide en partes iguales y asigna a B cualquier unidad sobrante para
+		// que la suma de ambas ganancias siempre coincida con la base.
+		gananciaA = base / 2
+		gananciaB = base - gananciaA
 	}
 
 	var cobroID int
